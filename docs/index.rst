@@ -1,0 +1,5 @@
+====================
+core.content
+====================
+
+User documentation
