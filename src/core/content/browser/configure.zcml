@@ -17,5 +17,18 @@
       type="plone"
       directory="static"
       />
-
+  <browser:page
+      name="manage_list"
+      for="*"
+      class=".views.Manage_list"
+      layer="zope.interface.Interface"
+      permission="zope2.View"
+      />
+  <browser:page
+      name="release_news"
+      for="*"
+      class=".views.Release_news"
+      layer="zope.interface.Interface"
+      permission="zope2.View"
+      />
 </configure>

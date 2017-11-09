@@ -1,0 +1,54 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+    xmlns:tal="http://xml.zope.org/namespaces/tal"
+    xmlns:metal="http://xml.zope.org/namespaces/metal"
+    xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+    lang="en"
+    metal:use-macro="context/main_template/macros/master"
+    i18n:domain="plone">
+<body>
+
+<metal:content-core fill-slot="content-core">
+<metal:block define-macro="content-core">
+    <link rel="stylesheet" href="../static/custom.css"/>
+    
+    <table tal:define="data python:view.get_data()"
+         >
+         
+         <tr tal:repeat="item data">
+
+            
+            <td >
+                <a tal:content="item/title"
+                   tal:define="title item/title"
+                   tal:attributes="href item/url"></a>
+            </td>
+            
+            <td tal:content="item/time"
+                tal:define="time item/time"></td>
+
+            <td>
+                <span tal:content="python:item['content'][:200]"
+                      tal:define="content item/content"></span>
+            </td>
+
+            <td>
+                <form action="release_news" method="POST">
+                    <input type="text" name="news_title" id="news_title"
+                           tal:attributes="value item/title" style="display:none"/>
+                    <input type="text" name="news_content" id="news_content"
+                           tal:attributes="value item/content" style="display:none"/>
+                    <input type="text" name="news_url" id="news_url"
+                           tal:attributes="value item/url" style="display:none"/>
+                    <button type="submit">發佈</button>
+                    
+                </form>
+            </td>
+
+        </tr>
+    </table>
+
+</metal:block>
+</metal:content-core>
+
+</body>
+</html>
