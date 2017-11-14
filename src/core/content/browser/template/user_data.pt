@@ -1,0 +1,37 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+    xmlns:tal="http://xml.zope.org/namespaces/tal"
+    xmlns:metal="http://xml.zope.org/namespaces/metal"
+    xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+    lang="en"
+    metal:use-macro="context/main_template/macros/master"
+    i18n:domain="plone">
+<body>
+
+<metal:content-core fill-slot="content-core">
+<metal:block define-macro="content-core">
+
+<?python
+    from plone import api
+    user = api.user.get_current()
+?>
+    <h1>hello ${user} !</h1>
+    <form action="save_user_data" method="POST">
+
+        <select name="web_site">
+            <option value="weibo_info">微博</option>
+            <option value="fb_info">FB</option>
+        </select>
+        <br/>
+        <br/>
+        <input type="text" name="account" placeholder="請輸入網站帳號"/>
+        <br/>
+        <input type="text" name="password" placeholder="請輸入網站密碼"/>
+        <br/>
+        <button type="submit">送出</button>
+
+    </form>
+</metal:block>
+</metal:content-core>
+
+</body>
+</html>

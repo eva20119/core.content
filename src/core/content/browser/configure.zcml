@@ -31,5 +31,19 @@
       layer="zope.interface.Interface"
       permission="zope2.View"
       />
+  <browser:page
+      name="user_data"
+      for="*"
+      class=".views.User_data"
+      layer="zope.interface.Interface"
+      permission="zope2.View"
+      />
+  <browser:page
+      name="save_user_data"
+      for="*"
+      class=".views.Save_user_data"
+      layer="zope.interface.Interface"
+      permission="zope2.View"
+      />
 
 </configure>

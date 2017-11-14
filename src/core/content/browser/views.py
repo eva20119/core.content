@@ -9,7 +9,7 @@ from selenium import webdriver
 import sys
 from Products.CMFPlone.utils import safe_unicode
 from plone import api
-from cPickle import Pickler as pickle
+import cPickle as pickle
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -68,57 +68,110 @@ class Release_news(BrowserView):
         self.btn_content = self.request.get('btn_content')
         self.news_url = self.request.get('news_url')
         self.web_user = api.user.get_current().getProperty('fullname')
-        
-        self.target = 'https://www.weibo.com/login.php'
-        self.release_news(self.target, self.news_title, self.news_content, self.btn_content, self.news_url, self.web_user, self.textarea_content)
 
-    def release_news(self, target, news_title, news_content, btn_content , news_url, web_user, textarea_content):
+        self.container = self.save2pickle(self.news_title, self.news_content, self.btn_content, self.news_url, self.web_user, self.textarea_content)
+
+        self.target = 'https://www.weibo.com/login.php'
+        print('container:%s'%self.container)
+        if self.container < 5:
+            self.release_news(self.target, self.web_user)
+
+    def save2pickle(self, news_title, news_content, btn_content , news_url, web_user, textarea_content):
+
+        try:
+            with open('/tmp/%s.pickle'%web_user,'rb') as f:
+                data = pickle.load(f)
+                count = len(data)
+                print('裏面有：%s'%count)
+            if count < 5:
+                with open('/tmp/%s.pickle'%web_user,'wb') as f:
+                    data.append({
+                                'news_title':news_title,
+                                'news_url':news_url,
+                                'btn_content':btn_content,
+                                'textarea_content':textarea_content,
+                                'news_content':news_content
+                            })  
+                    pickle.dump(data,f)
+                    new_count=len(data)
+                    print ('新增後裏面有：%s'%new_count)
+                    return new_count
+            else:
+                print('排程以滿')
+                return 5
+        except:
+            # 裏面什麼都沒有
+            with open('/tmp/%s.pickle'%web_user,'wb') as f:
+                data=[]
+                data.append({
+                             'news_title':news_title,
+                             'news_url':news_url,
+                             'btn_content':btn_content,
+                             'textarea_content':textarea_content,
+                             'news_content':news_content
+                        })
+                count = len(data)
+                pickle.dump(data,f)
+                print ('裏面什麼都沒有:%s'%count)
+                return count
+
+    def release_news(self, target, web_user):
+        with open('/tmp/%s.pickle'%web_user,'rb') as f:
+            data = pickle.load(f)
+        news_title = data[0]['news_title']
+        news_url = data[0]['news_url']
+        btn_content = data[0]['btn_content']
+        textarea_content = data[0]['textarea_content']
+        news_content = data[0]['news_content']
         # chrome_options = webdriver.ChromeOptions()
         # chrome_options.add_argument('--headless')
         # chrome_options.add_argument('--disable-gpu')
         # chrome_options.add_argument('window-size=1200,1100');
         # chromedriver = "/usr/local/share/chromedriver"
         # browser = webdriver.Chrome(chrome_options=chrome_options, executable_path=chromedriver)
-        # # browser = webdriver.Chrome()
-        # data_list = []
-        
-        # browser.maximize_window()
+        browser = webdriver.Chrome()
 
-        # browser.implicitly_wait(10)
-        # browser.get(target)
+        browser.maximize_window()
 
-        # print browser.title
+        browser.implicitly_wait(10)
+        browser.get(target)
 
-        # username = browser.find_element_by_id('loginname')
-        # pwd = browser.find_element_by_xpath('//*[@id="pl_login_form"]/div/div[3]/div[2]/div/input')
-        # print ('輸入帳號密碼')
-        # username.send_keys('ah13441673@gmail.com')
-        # time.sleep(1)
-        # pwd.send_keys('hn13441673')
-        # time.sleep(1)
-        # browser.find_element_by_xpath('//*[@id="pl_login_form"]/div/div[3]/div[6]/a').click()
-        # print ('按下登入紐')
-        # # 數入訊息
-        # time.sleep(2)
-        # print ('輸入訊息')
-        # send_box = browser.find_element_by_xpath('//textarea[@class="W_input"]')
+        print browser.title
 
-        # send_box.send_keys(textarea_content)
-        # send_box.send_keys(u'\ue007')
-        # time.sleep(1)
-        # send_box.send_keys(news_title)
-        # send_box.send_keys(u'\ue007')
-        # time.sleep(1)
-        # send_box.send_keys(news_content)
-        # send_box.send_keys(u'\ue007')
-        # time.sleep(1)
-        # # 按下送出訊息
-        # browser.find_element_by_xpath('//div[@id="v6_pl_content_publishertop"]/div/div[3]/div[1]/a').click()
-        # time.sleep(3)
-        # browser.quit()
+        username = browser.find_element_by_id('loginname')
+        pwd = browser.find_element_by_xpath('//*[@id="pl_login_form"]/div/div[3]/div[2]/div/input')
+        print ('輸入帳號密碼')
+        username.send_keys('ah13441673@gmail.com')
+        time.sleep(1)
+        pwd.send_keys('hn13441673')
+        time.sleep(1)
+        browser.find_element_by_xpath('//*[@id="pl_login_form"]/div/div[3]/div[6]/a').click()
+        print ('按下登入紐')
+        # 數入訊息
+        time.sleep(2)
+        print ('輸入訊息')
+        send_box = browser.find_element_by_xpath('//textarea[@class="W_input"]')
 
-        # if btn_content == "發佈":
-        #     self.insert_web_user(news_url, web_user)
+        send_box.send_keys(textarea_content)
+        send_box.send_keys(u'\ue007')
+        time.sleep(1)
+        send_box.send_keys(news_title)
+        send_box.send_keys(u'\ue007')
+        time.sleep(1)
+        send_box.send_keys(news_content)
+        send_box.send_keys(u'\ue007')
+        time.sleep(1)
+        # 按下送出訊息
+        browser.find_element_by_xpath('//div[@id="v6_pl_content_publishertop"]/div/div[3]/div[1]/a').click()
+        time.sleep(3)
+        browser.quit()
+
+        if btn_content == "發佈":
+            self.insert_web_user(news_url, web_user)
+        time.sleep(5)
+        with open('/tmp/%s.pickle'%web_user,'wb') as f:
+            del data[0]
+            pickle.dump(data,f)
         print('發佈完成')
 
     def insert_web_user(self, news_url, web_user):
@@ -165,6 +218,42 @@ class Release_news(BrowserView):
                 cursor.execute(sql)
                 who_release = cursor.fetchall()
                 return who_release                
+            connection.commit()
+
+        finally:
+            connection.close()
+
+class User_data(BrowserView):
+    template = ViewPageTemplateFile('template/user_data.pt')
+    def __call__(self):
+        return self.template()
+
+class Save_user_data(BrowserView):
+    def __call__(self):
+        web_site = self.request.get('web_site')
+        account = self.request.get('account')
+        password = self.request.get('password')
+        user_name = api.user.get_current()
+
+        connection = pymysql.connect(
+            host='localhost',
+            user='root',
+            password='henry!QAZ@WSX',
+            db='scrapyDB',
+            charset='utf8mb4',
+            cursorclass=pymysql.cursors.DictCursor
+        )
+        try:
+            with connection.cursor() as cursor:
+                sql = """SELECT user_name FROM {}""".format(web_site)
+                cursor.execute(sql)
+                result = cursor.fetchone()
+                if result['user_name'] == '':
+                    sql = """INSERT INTO {}(user_name,account,password) VALUES('{}','{}','{}')""".format(web_site,user_name,account,password)
+                else:
+                    sql = """UPDATE {} SET account='{}',password='{}' WHERE user_name='{}'""".format(web_site,account,password,user_name)
+                cursor.execute(sql)
+
             connection.commit()
 
         finally:
