@@ -1,3 +1,7 @@
-.btn_hide{
+.td_hide{
     display: none;
+}
+.textarea_mang{
+    min-width: 0;
+    min-height: 0;
 }

@@ -31,4 +31,5 @@
       layer="zope.interface.Interface"
       permission="zope2.View"
       />
+
 </configure>

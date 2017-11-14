@@ -10,14 +10,14 @@
 <metal:content-core fill-slot="content-core">
 <metal:block define-macro="content-core">
     <link rel="stylesheet" href="/Plone/++plone++core.content/jquery.notify.css"/>
+    <link rel="stylesheet" href="/Plone/++plone++core.content/custom.css"/>
 
     <table tal:define="data python:view.get_data()">
-         
         <tr tal:repeat="item data">
-        
-            <td >
+            <td>
                 <a tal:content="item/title"
-                   tal:attributes="href item/url"></a>
+                class="news_title"
+                tal:attributes="href item/url"></a>
             </td>
             
             <td tal:content="item/time"></td>
@@ -25,24 +25,22 @@
             <td>
                 <span tal:content="python:item['content'][:200]"></span>
             </td>
-
             <td>
-                <form action="release_news" method="POST">
-
+                <form action="release_news" method="POST" class="td_hide">
                     <input type="text" name="news_title" id="news_title"
-                           tal:attributes="value item/title" style="display:none"/>
+                        tal:attributes="value item/title" style="display:none"/>
                     <input type="text" name="news_content" id="news_content"
-                           tal:attributes="value item/content" style="display:none"/>
+                        tal:attributes="value item/content" style="display:none"/>
                     <input type="text" name="news_url" id="news_url"
-                           tal:attributes="value item/url" style="display:none"/>
+                        tal:attributes="value item/url" style="display:none"/>
                     <input type="text" name="btn_content" id="btn_content"
-                           tal:attributes="value item/btn_content" style="display:none"/>
-
-                    <button type="submit"
-                            class="send_btn"
-                            tal:content="item/btn_content"></button>
-
+                        tal:attributes="value item/btn_content" style="display:none"/>
+                    <textarea class="textarea_mang" cols="30" rows="1" name="textarea_content"></textarea>
+                    <button type="submit" class="send_btn">確認送出</button>
                 </form>
+                <button type="submit"
+                        class="check_btn"
+                        tal:content="item/btn_content"></button>
             </td>
 
         </tr>

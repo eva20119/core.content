@@ -1,4 +1,9 @@
-$('.send_btn').on('click', function(){
+$('.check_btn').on('click', function(e){
+    $(this).siblings().toggle('normal')
+    $(this).toggle('normal')
+});
+
+$('.send_btn').click(function (e) { 
     notify({
         type: "success", //alert | success | error | warning | info
         title: "訊息以進發佈程序，請勿多次發佈",
