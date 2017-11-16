@@ -9,13 +9,14 @@
 
 <metal:content-core fill-slot="content-core">
 <metal:block define-macro="content-core">
-
+<link rel="stylesheet" href="/Plone/++plone++core.content/custom.css"/>
 <?python
     from plone import api
-    user = api.user.get_current()
+    user = api.user.get_current().getProperty('fullname')
 ?>
-    <h1>hello ${user} !</h1>
-    <form action="save_user_data" method="POST">
+    <h1>Hello ${user} !</h1>
+    <form action="save_user_data" method="POST"
+          tal:define="data python:view.check_user_data()">
 
         <select name="web_site">
             <option value="weibo_info">微博</option>
@@ -23,13 +24,34 @@
         </select>
         <br/>
         <br/>
-        <input type="text" name="account" placeholder="請輸入網站帳號"/>
+        <label>
+            <input type="text" name="account" tal:attributes="placeholder python:data[0]['account']"/>
+        </label>
         <br/>
-        <input type="text" name="password" placeholder="請輸入網站密碼"/>
+        <label>
+            <input type="text" name="password" tal:attributes="placeholder python:data[0]['password']"/>
+        </label>
+        <br/>
+        
+        <label>
+            <input type="checkbox" name="auto_release" id="auto_release" />是否自動發佈
+            <select name="ran_or_new" class="user_select">
+                <option value="ran">最新</option>
+                <option value="new">隨機</option>
+            </select>
+            <select name="gap" class="user_select">
+                <option value="30">半小時</option>
+                <option value="60">一小時</option>
+                <option value="120">兩小時</option>
+            </select>
+        </label>
         <br/>
         <button type="submit">送出</button>
 
     </form>
+
+<script src="/Plone/++plone++core.content/custom.js"></script> 
+
 </metal:block>
 </metal:content-core>
 

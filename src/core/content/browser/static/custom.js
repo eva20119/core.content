@@ -26,3 +26,7 @@ $('.send_btn').click(function (e) {
         template: '<div class="notify"><div class="notify-text"></div></div>'
     });
 });
+
+$('#auto_release').change(function (e) { 
+    $(this).siblings().toggle('normal')
+});
