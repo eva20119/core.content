@@ -8,7 +8,6 @@ import os
 from selenium import webdriver
 import sys
 from Products.CMFPlone.utils import safe_unicode
-from plone import api
 import cPickle as pickle
 
 reload(sys)
