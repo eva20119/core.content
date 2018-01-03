@@ -45,5 +45,11 @@
       layer="zope.interface.Interface"
       permission="zope2.View"
       />
-
+  <browser:page
+      name="clear_pickle"
+      for="*"
+      class=".views.ClearPickle"
+      layer="zope.interface.Interface"
+      permission="zope2.View"
+      />
 </configure>

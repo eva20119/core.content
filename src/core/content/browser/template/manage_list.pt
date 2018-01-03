@@ -12,6 +12,10 @@
     <link rel="stylesheet" href="/Plone/++plone++core.content/jquery.notify.css"/>
     <link rel="stylesheet" href="/Plone/++plone++core.content/custom.css"/>
 
+    <form action="clear_pickle" style="float:right;margin-bottom:10px">
+        <button type="submit">清空排程</button>
+    </form>
+
     <table tal:define="data python:view.get_data()">
         <tr tal:repeat="item data">
             <td>

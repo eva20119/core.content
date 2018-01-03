@@ -16,7 +16,7 @@ sys.setdefaultencoding('utf-8')
 
 class Manage_list(BrowserView):
     template = ViewPageTemplateFile('template/manage_list.pt')
-    
+
     def get_data(self):
         web_user = api.user.get_current().getUserName()
 
@@ -30,7 +30,7 @@ class Manage_list(BrowserView):
         )
         try:
             with connection.cursor() as cursor:
-                sql = """SELECT title,content,time,url,who_release FROM news ORDER BY `time` DESC LIMIT 3"""
+                sql = """SELECT title,content,time,url,who_release FROM news ORDER BY `time` DESC LIMIT 10"""
                 cursor.execute(sql)
                 result = cursor.fetchall()
                 data = []
@@ -132,7 +132,9 @@ class Release_news(BrowserView):
         btn_content = data[0]['btn_content']
         textarea_content = data[0]['textarea_content']
         news_content = data[0]['news_content']
-
+        with open('/tmp/%s.pickle'%web_user,'wb') as f:
+            del data[0]
+            pickle.dump(data,f)
         # chrome_options = webdriver.ChromeOptions()
         # chrome_options.add_argument('--headless')
         # chrome_options.add_argument('--disable-gpu')
@@ -158,7 +160,7 @@ class Release_news(BrowserView):
         browser.find_element_by_xpath('//*[@id="pl_login_form"]/div/div[3]/div[6]/a').click()
         print ('按下登入紐')
         # 數入訊息
-        time.sleep(2)
+        time.sleep(3)
         print ('輸入訊息')
         send_box = browser.find_element_by_xpath('//textarea[@class="W_input"]')
 
@@ -179,9 +181,7 @@ class Release_news(BrowserView):
         if btn_content == "發佈":
             self.insert_web_user(news_url, web_user)
         time.sleep(5)
-        with open('/tmp/%s.pickle'%web_user,'wb') as f:
-            del data[0]
-            pickle.dump(data,f)
+        
         print('發佈完成')
 
     def insert_web_user(self, news_url, web_user):
@@ -341,3 +341,15 @@ class Save_user_data(BrowserView):
         self.request.response.redirect('%s/user_data' % portal.absolute_url())
         api.portal.show_message('更改成功！', self.request, 'info')
         return
+
+class ClearPickle(BrowserView):
+    def __call__(self):
+        web_user = api.user.get_current().getUserName()
+        portal = api.portal.get()
+        try:
+            os.remove('/tmp/%s.pickle' %web_user)
+            self.request.response.redirect('%s/manage_list' % portal.absolute_url())
+            api.portal.show_message('以清空排程', self.request, 'info')
+        except:
+            self.request.response.redirect('%s/manage_list' % portal.absolute_url())
+            api.portal.show_message('清空排程發生錯誤', self.request, 'error')
